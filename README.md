@@ -10,7 +10,7 @@ Open `http://localhost:4174/`.
 
 ## GitHub Pages
 
-The `main` branch is published automatically by GitHub Actions at:
+The `main` branch is published through GitHub Pages at:
 
 `https://7r6g4drvn6-hub.github.io/operation-platform/`
 
