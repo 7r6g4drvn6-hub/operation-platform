@@ -18,6 +18,14 @@ The hosted page is the static UI prototype and uses mock browser state. The loca
 `server.js` remains the development server; no production API or database is
 included in this prototype.
 
+## Progress report
+
+- [Product progress report (PDF)](./docs/Operation_Platform_Product_Progress_Report.pdf)
+- [Product progress report (Word)](./docs/Operation_Platform_Product_Progress_Report.docx)
+- [Product progress report (Markdown)](./docs/Operation_Platform_Product_Progress_Report.md)
+- [Execution backlog](./docs/Operation_Platform_Execution_Backlog.md)
+- [Architecture and data flow diagrams](./docs/architecture/architecture.md)
+
 This is a UI-first prototype for an evidence-driven Operation Platform. It uses local mock data and a browser-local shared State Layer. It has no production integrations, email ingestion, AI correlation, or server-side persistence.
 
 ## V1 domain model
