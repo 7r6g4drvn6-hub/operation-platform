@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+node_modules/
+dist/
+coverage/
+
+# Local browser/server captures
+capture-output/
+display-captures/
+

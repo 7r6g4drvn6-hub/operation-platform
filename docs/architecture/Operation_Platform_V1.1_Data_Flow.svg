@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1700" viewBox="0 0 2600 1700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b33"/><stop offset="1" stop-color="#0b3054"/></linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#4fc6dc"/></marker>
+    <marker id="pass" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#5bd197"/></marker>
+    <marker id="fail" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#f29a72"/></marker>
+    <style><![CDATA[
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f0f7ff}.title{font-size:44px;font-weight:700}.sub{font-size:19px;fill:#b9cee5}.lane{fill:#0d3159;stroke:#356b9f;stroke-width:2}.laneTitle{font-size:16px;letter-spacing:1.5px;font-weight:700;fill:#86dced}.step{fill:#fff;stroke:#bfd8e9;stroke-width:2}.signal{fill:#d9f4f8;stroke:#41b7cc;stroke-width:3}.problem{fill:#e5efff;stroke:#6996db;stroke-width:3}.operation{fill:#e9f5ff;stroke:#4f9ac9;stroke-width:3}.verify{fill:#fff6dc;stroke:#e0b84e;stroke-width:3}.pass{fill:#e3f7ec;stroke:#59bb87;stroke-width:3}.fail{fill:#fff0e9;stroke:#e38b68;stroke-width:3}.t{font-size:21px;font-weight:700;fill:#103756!important}.s{font-size:15px;fill:#52708c!important}.tiny{font-size:14px;fill:#5a7894!important}.arrow{stroke:#4fc6dc;stroke-width:3;fill:none;marker-end:url(#arrow)}.passArrow{stroke:#5bd197;stroke-width:3;fill:none;marker-end:url(#pass)}.failArrow{stroke:#f29a72;stroke-width:3;fill:none;marker-end:url(#fail)}.tag{font-size:16px;font-weight:700}.white{fill:#fff}
+    ]]></style>
+  </defs>
+  <rect width="2600" height="1700" fill="url(#bg)"/>
+  <text x="1300" y="78" text-anchor="middle" class="title">China Operation Signal Detection And Resolution Flow</text>
+  <text x="1300" y="112" text-anchor="middle" class="sub">Detect → Understand → Act → Verify → Outcome</text>
+
+  <rect x="60" y="155" width="2480" height="230" rx="12" class="lane"/><text x="95" y="190" class="laneTitle">01 · SIGNAL GENERATION + INGESTION</text>
+  <rect x="150" y="230" width="340" height="105" rx="8" class="step"/><text x="320" y="270" text-anchor="middle" class="t" fill="#103756">Probe Platform</text><text x="320" y="298" text-anchor="middle" class="s" fill="#52708c">Approval Download Failure</text><text x="320" y="320" text-anchor="middle" class="s" fill="#52708c">Failure rate: 12.8%</text>
+  <path d="M490 282H635" class="arrow"/>
+  <rect x="635" y="230" width="380" height="105" rx="8" class="step"/><text x="825" y="270" text-anchor="middle" class="t" fill="#103756">Integration API</text><text x="825" y="300" text-anchor="middle" class="s" fill="#52708c">POST /api/integration/probe/result</text>
+  <path d="M1015 282H1160" class="arrow"/>
+  <rect x="1160" y="230" width="280" height="105" rx="8" class="step"/><text x="1300" y="270" text-anchor="middle" class="t" fill="#103756">Probe Adapter</text><text x="1300" y="300" text-anchor="middle" class="s" fill="#52708c">Normalize + validate</text>
+  <path d="M1440 282H1585" class="arrow"/>
+  <rect x="1585" y="220" width="510" height="125" rx="9" class="signal"/><text x="1840" y="263" text-anchor="middle" class="t" fill="#103756">Signal Service → Signal Created</text><text x="1840" y="291" text-anchor="middle" class="s" fill="#52708c">SIG-0001 · Probe · MIB3 Approval · China</text><text x="1840" y="316" text-anchor="middle" class="s" fill="#52708c">Critical · failure_rate 12.8% / threshold 1%</text>
+
+  <rect x="60" y="425" width="2480" height="275" rx="12" class="lane"/><text x="95" y="460" class="laneTitle">02 · SIGNAL CORRELATION</text>
+  <rect x="160" y="510" width="245" height="115" rx="8" class="signal"/><text x="282" y="550" text-anchor="middle" class="t" fill="#103756">SIG-0001</text><text x="282" y="578" text-anchor="middle" class="s" fill="#52708c">Probe Failure</text>
+  <rect x="455" y="510" width="245" height="115" rx="8" class="signal"/><text x="577" y="550" text-anchor="middle" class="t" fill="#103756">SIG-0002</text><text x="577" y="578" text-anchor="middle" class="s" fill="#52708c">Availability Drop</text>
+  <rect x="750" y="510" width="245" height="115" rx="8" class="signal"/><text x="872" y="550" text-anchor="middle" class="t" fill="#103756">SIG-0003</text><text x="872" y="578" text-anchor="middle" class="s" fill="#52708c">Incident HTTP 500</text>
+  <rect x="1045" y="510" width="245" height="115" rx="8" class="signal"/><text x="1167" y="550" text-anchor="middle" class="t" fill="#103756">SIG-0004</text><text x="1167" y="578" text-anchor="middle" class="s" fill="#52708c">Release Deployment</text>
+  <path d="M405 568H1415M700 568H1415M995 568H1415M1290 568H1415" class="arrow"/>
+  <rect x="1415" y="495" width="440" height="145" rx="9" class="signal"/><text x="1635" y="540" text-anchor="middle" class="t" fill="#103756">Correlation Engine</text><text x="1635" y="570" text-anchor="middle" class="s" fill="#52708c">Same service · same region · same time window</text><text x="1635" y="598" text-anchor="middle" class="s" fill="#52708c">Rule Engine + Risk Calculation</text>
+  <path d="M1855 568H1995" class="arrow"/>
+  <rect x="1995" y="510" width="360" height="115" rx="8" class="problem"/><text x="2175" y="550" text-anchor="middle" class="t" fill="#103756">Problem Candidate</text><text x="2175" y="580" text-anchor="middle" class="s" fill="#52708c">Evidence-backed pattern</text>
+
+  <rect x="60" y="740" width="2480" height="230" rx="12" class="lane"/><text x="95" y="775" class="laneTitle">03 · PROBLEM → OPERATION EXECUTION</text>
+  <path d="M380 850H535" class="arrow"/>
+  <rect x="150" y="810" width="230" height="90" rx="8" class="step"/><text x="265" y="847" text-anchor="middle" class="t" fill="#103756">User Action</text><text x="265" y="875" text-anchor="middle" class="s" fill="#52708c">Create Problem</text>
+  <rect x="535" y="800" width="340" height="110" rx="8" class="problem"/><text x="705" y="842" text-anchor="middle" class="t" fill="#103756">PRB-204</text><text x="705" y="872" text-anchor="middle" class="s" fill="#52708c">Related SIG-0001 / 2 / 3</text>
+  <path d="M875 855H1035" class="arrow"/>
+  <rect x="1035" y="800" width="380" height="110" rx="8" class="operation"/><text x="1225" y="842" text-anchor="middle" class="t" fill="#103756">OP-102</text><text x="1225" y="872" text-anchor="middle" class="s" fill="#52708c">Improve Approval Download Stability</text>
+  <path d="M1415 855H1575" class="arrow"/>
+  <rect x="1575" y="800" width="300" height="110" rx="8" class="operation"/><text x="1725" y="842" text-anchor="middle" class="t" fill="#103756">Actions</text><text x="1725" y="872" text-anchor="middle" class="s" fill="#52708c">Probe · Fix · Validate</text>
+  <path d="M1875 855H2035" class="arrow"/>
+  <rect x="2035" y="800" width="330" height="110" rx="8" class="operation"/><text x="2200" y="842" text-anchor="middle" class="t" fill="#103756">Evidence</text><text x="2200" y="872" text-anchor="middle" class="s" fill="#52708c">Probe / Availability / CR</text>
+
+  <rect x="60" y="1010" width="2480" height="230" rx="12" class="lane"/><text x="95" y="1045" class="laneTitle">04 · INDEPENDENT VERIFICATION</text>
+  <rect x="245" y="1080" width="360" height="105" rx="8" class="step"/><text x="425" y="1120" text-anchor="middle" class="t" fill="#103756">Verification Probe</text><text x="425" y="1148" text-anchor="middle" class="s" fill="#52708c">Before 12.8% → After 0.6%</text>
+  <path d="M605 1132H795" class="arrow"/>
+  <rect x="795" y="1080" width="415" height="105" rx="8" class="verify"/><text x="1002" y="1120" text-anchor="middle" class="t" fill="#103756">Verification Engine</text><text x="1002" y="1148" text-anchor="middle" class="s" fill="#52708c">Expected &lt; 1% vs Actual</text>
+  <path d="M1210 1132H1400" class="arrow"/>
+  <polygon points="1600,1060 1800,1132 1600,1204 1400,1132" class="verify"/><text x="1600" y="1126" text-anchor="middle" class="t" fill="#103756">PASS?</text><text x="1600" y="1155" text-anchor="middle" class="s" fill="#52708c">0.6% &lt; 1%</text>
+  <text x="1395" y="1090" class="tag white">Compare</text>
+
+  <rect x="60" y="1280" width="2480" height="335" rx="12" class="lane"/><text x="95" y="1315" class="laneTitle">05 · OUTCOME OR CONTINUED OPERATION</text>
+  <path d="M1800 1132H1995V1395H2080" class="passArrow"/><text x="1870" y="1230" class="tag" fill="#87efb7">PASS</text>
+  <rect x="2080" y="1345" width="360" height="125" rx="9" class="pass"/><text x="2260" y="1382" text-anchor="middle" class="t" fill="#103756">Outcome Achieved</text><text x="2260" y="1410" text-anchor="middle" class="s" fill="#52708c">Operation Completed</text><text x="2260" y="1435" text-anchor="middle" class="s" fill="#52708c">Problem Resolved · History Updated</text>
+  <path d="M1600 1204V1395H750" class="failArrow"/><text x="1250" y="1375" class="tag" fill="#f9b08e">FAIL</text>
+  <rect x="390" y="1345" width="360" height="125" rx="9" class="fail"/><text x="570" y="1382" text-anchor="middle" class="t" fill="#103756">Corrective Action</text><text x="570" y="1410" text-anchor="middle" class="s" fill="#52708c">Operation remains Verifying</text><text x="570" y="1435" text-anchor="middle" class="s" fill="#52708c">No Outcome / No Resolution</text>
+  <path d="M570 1470V1535H425V1185" class="failArrow"/>
+  <text x="425" y="1580" text-anchor="middle" class="sub">Run another independent verification Probe</text>
+  <text x="1300" y="1665" text-anchor="middle" class="sub">Signal is the unified entry object. Probe remains an independent evidence generator; it is not merged into Operation.</text>
+</svg>

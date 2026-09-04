@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1500" viewBox="0 0 2400 1500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b33"/><stop offset="1" stop-color="#0b3054"/></linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#4fc6dc"/></marker>
+    <style><![CDATA[
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#f0f7ff}.title{font-size:44px;font-weight:700}.sub{font-size:19px;fill:#b9cee5}.layer{fill:#0d3159;stroke:#356b9f;stroke-width:2}.layerTitle{font-size:17px;letter-spacing:1.6px;font-weight:700;fill:#86dced}.node{fill:#e8f3ff;stroke:#6b9fd4;stroke-width:3}.signal{fill:#d9f4f8;stroke:#41b7cc;stroke-width:3}.overview{fill:#e5f7ec;stroke:#59bb87;stroke-width:3}.t{font-size:22px;font-weight:700;fill:#103756}.s{font-size:15px;fill:#52708c}.arrow{stroke:#4fc6dc;stroke-width:3;fill:none;marker-end:url(#arrow)}.badge{fill:#163f69}.badgeText{font-size:14px;font-weight:700;fill:#9de7f4}.metric{fill:#fff;stroke:#bfd8e9;stroke-width:2}.metricTitle{font-size:16px;font-weight:700;fill:#123555}.metricValue{font-size:24px;font-weight:700;fill:#123555}
+    ]]></style>
+  </defs>
+  <rect width="2400" height="1500" fill="url(#bg)"/>
+  <text x="1200" y="72" text-anchor="middle" class="title">Operation Platform V1.1 China Operation Overview Architecture</text>
+  <text x="1200" y="108" text-anchor="middle" class="sub">From signals to business health, impact, outcome, and continuous learning</text>
+
+  <rect x="70" y="145" width="2260" height="235" rx="12" class="layer"/>
+  <text x="105" y="181" class="layerTitle">01 · SIGNAL INTELLIGENCE</text>
+  <rect x="180" y="225" width="290" height="92" rx="8" class="signal"/><text x="325" y="264" text-anchor="middle" class="t" fill="#103756">Signals</text><text x="325" y="291" text-anchor="middle" class="s" fill="#52708c">Probe · SMO · Incident</text>
+  <rect x="550" y="225" width="290" height="92" rx="8" class="signal"/><text x="695" y="264" text-anchor="middle" class="t" fill="#103756">Correlation</text><text x="695" y="291" text-anchor="middle" class="s" fill="#52708c">Rules · risk · context</text>
+  <rect x="920" y="225" width="290" height="92" rx="8" class="node"/><text x="1065" y="264" text-anchor="middle" class="t" fill="#103756">Problems</text><text x="1065" y="291" text-anchor="middle" class="s" fill="#52708c">Patterns and impact</text>
+  <rect x="1290" y="225" width="290" height="92" rx="8" class="node"/><text x="1435" y="264" text-anchor="middle" class="t" fill="#103756">Operations</text><text x="1435" y="291" text-anchor="middle" class="s" fill="#52708c">Accountable response</text>
+  <rect x="1660" y="225" width="290" height="92" rx="8" class="node"/><text x="1805" y="264" text-anchor="middle" class="t" fill="#103756">Evidence</text><text x="1805" y="291" text-anchor="middle" class="s" fill="#52708c">Objective proof</text>
+  <path d="M470 271H550M840 271H920M1210 271H1290M1580 271H1660" class="arrow"/>
+  <rect x="2030" y="225" width="190" height="92" rx="8" class="badge"/><text x="2125" y="264" text-anchor="middle" class="badgeText">Probe</text><text x="2125" y="291" text-anchor="middle" class="badgeText">independent</text>
+  <path d="M1950 271H2030" class="arrow"/>
+
+  <rect x="70" y="420" width="2260" height="255" rx="12" class="layer"/>
+  <text x="105" y="456" class="layerTitle">02 · CLOSED-LOOP EXECUTION</text>
+  <rect x="215" y="510" width="335" height="95" rx="8" class="node"/><text x="382" y="550" text-anchor="middle" class="t" fill="#103756">Verification</text><text x="382" y="578" text-anchor="middle" class="s" fill="#52708c">Expected vs actual</text>
+  <rect x="665" y="510" width="335" height="95" rx="8" class="node"/><text x="832" y="550" text-anchor="middle" class="t" fill="#103756">Outcome</text><text x="832" y="578" text-anchor="middle" class="s" fill="#52708c">Measured conclusion</text>
+  <rect x="1115" y="510" width="335" height="95" rx="8" class="node"/><text x="1282" y="550" text-anchor="middle" class="t" fill="#103756">History</text><text x="1282" y="578" text-anchor="middle" class="s" fill="#52708c">State-driven learning record</text>
+  <rect x="1565" y="510" width="335" height="95" rx="8" class="node"/><text x="1732" y="550" text-anchor="middle" class="t" fill="#103756">Continuous Learning</text><text x="1732" y="578" text-anchor="middle" class="s" fill="#52708c">Improve future detection</text>
+  <path d="M550 557H665M1000 557H1115M1450 557H1565" class="arrow"/>
+  <text x="1200" y="650" text-anchor="middle" class="sub">Action completion alone is not closure: evidence, verification, and outcome are required.</text>
+
+  <rect x="70" y="715" width="2260" height="555" rx="12" class="layer"/>
+  <text x="105" y="751" class="layerTitle">03 · CHINA OPERATION OVERVIEW</text>
+  <rect x="160" y="815" width="535" height="125" rx="10" class="overview"/><text x="427" y="856" text-anchor="middle" class="t" fill="#103756">China Operation Overview</text><text x="427" y="885" text-anchor="middle" class="s" fill="#52708c">How healthy is China operation?</text><text x="427" y="910" text-anchor="middle" class="s" fill="#52708c">What improved after action?</text>
+  <path d="M427 940V1000" class="arrow"/>
+  <rect x="90" y="1000" width="380" height="175" rx="9" class="metric"/><text x="280" y="1040" text-anchor="middle" class="metricTitle" fill="#123555">Health</text><text x="280" y="1080" text-anchor="middle" class="metricValue" fill="#123555">Healthy</text><text x="280" y="1112" text-anchor="middle" class="s" fill="#52708c">Critical risk · availability</text><text x="280" y="1138" text-anchor="middle" class="s" fill="#52708c">active Operations</text>
+  <rect x="520" y="1000" width="380" height="175" rx="9" class="metric"/><text x="710" y="1040" text-anchor="middle" class="metricTitle" fill="#123555">Business Impact</text><text x="710" y="1080" text-anchor="middle" class="metricValue" fill="#123555">2,000</text><text x="710" y="1112" text-anchor="middle" class="s" fill="#52708c">users impacted</text><text x="710" y="1138" text-anchor="middle" class="s" fill="#52708c">downtime · recovery</text>
+  <rect x="950" y="1000" width="380" height="175" rx="9" class="metric"/><text x="1140" y="1040" text-anchor="middle" class="metricTitle" fill="#123555">Outcome</text><text x="1140" y="1080" text-anchor="middle" class="metricValue" fill="#123555">0.6%</text><text x="1140" y="1112" text-anchor="middle" class="s" fill="#52708c">failure rate after fix</text><text x="1140" y="1138" text-anchor="middle" class="s" fill="#52708c">verified against target</text>
+  <rect x="1380" y="1000" width="380" height="175" rx="9" class="metric"/><text x="1570" y="1040" text-anchor="middle" class="metricTitle" fill="#123555">Trend</text><text x="1570" y="1080" text-anchor="middle" class="metricValue" fill="#123555">+2.4%</text><text x="1570" y="1112" text-anchor="middle" class="s" fill="#52708c">availability improvement</text><text x="1570" y="1138" text-anchor="middle" class="s" fill="#52708c">7-day signal trend</text>
+  <rect x="1810" y="1000" width="380" height="175" rx="9" class="metric"/><text x="2000" y="1040" text-anchor="middle" class="metricTitle" fill="#123555">Closed-loop</text><text x="2000" y="1080" text-anchor="middle" class="metricValue" fill="#123555">73%</text><text x="2000" y="1112" text-anchor="middle" class="s" fill="#52708c">verified outcomes</text><text x="2000" y="1138" text-anchor="middle" class="s" fill="#52708c">/ Operations started</text>
+  <path d="M427 940V975H280V1000M427 975H710V1000M427 975H1140V1000M427 975H1570V1000M427 975H2000V1000" class="arrow"/>
+  <text x="1200" y="1360" text-anchor="middle" class="sub">Overview aggregates Health · Impact · Outcome · Trend · Closed-loop; it is not an Incident dashboard.</text>
+</svg>

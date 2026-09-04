@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101828" />
+    <title>Operation Platform</title>
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles-v11.css" />
+    <link rel="stylesheet" href="./styles-v12.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="#/overview" aria-label="Operation Platform home">
+          <span class="brand-mark"><i data-lucide="orbit"></i></span>
+          <span><strong>Operation</strong><small>Evidence-driven platform</small></span>
+        </a>
+
+        <nav class="nav-stack">
+          <span class="nav-label">Overview</span>
+          <a href="#/overview" data-route="overview"><i data-lucide="globe-2"></i>China Operation Overview</a>
+          <a href="#/command-center" data-route="command-center"><i data-lucide="layout-dashboard"></i>Command Center</a>
+          <span class="nav-label">Investigate</span>
+          <a href="#/signals" data-route="signals"><i data-lucide="radio-tower"></i>Signals <b id="nav-signal-count">5</b></a>
+          <a href="#/problems" data-route="problems"><i data-lucide="circle-dot-dashed"></i>Problems <b id="nav-problem-count">3</b></a>
+          <a href="#/evidence" data-route="evidence"><i data-lucide="shield-check"></i>Evidence</a>
+          <a href="#/incidents" data-route="incidents"><i data-lucide="siren"></i>Incidents <b id="nav-incident-count">10</b></a>
+          <a href="#/probe" data-route="probe"><i data-lucide="radar"></i>Probe</a>
+          <span class="nav-label">Execute</span>
+          <a href="#/operations" data-route="operations"><i data-lucide="crosshair"></i>Operations <b id="nav-operation-count">3</b></a>
+          <a href="#/history" data-route="history"><i data-lucide="history"></i>Closed-loop History</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="environment"><span></span><div><small>Environment</small><strong>China Production</strong></div></div>
+          <button class="profile" type="button" title="View profile"><span>AM</span><div><strong>Alex Morgan</strong><small>Operation Manager</small></div><i data-lucide="chevrons-up-down"></i></button>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <button class="mobile-menu" type="button" aria-label="Toggle navigation"><i data-lucide="menu"></i></button>
+          <div class="breadcrumb" id="breadcrumb">Operation Platform <i data-lucide="chevron-right"></i> Command Center</div>
+          <div class="topbar-actions">
+            <button class="icon-button" type="button" title="Search"><i data-lucide="search"></i></button>
+            <button class="icon-button notification" type="button" title="Notifications"><i data-lucide="bell"></i><em>3</em></button>
+            <button class="primary-button" type="button" id="create-operation"><i data-lucide="plus"></i>New operation</button>
+          </div>
+        </header>
+        <div id="app" class="page-content"></div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="icon-button modal-close" id="modal-close" type="button" title="Close"><i data-lucide="x"></i></button>
+        <div id="modal-content"></div>
+      </section>
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="./prototype-state.js"></script>
+    <script src="./api/signal-service.js"></script>
+    <script src="./api/source-adapter/probe-adapter.js"></script>
+    <script src="./api/source-adapter/incident-adapter.js"></script>
+    <script src="./api/source-adapter/smo-adapter.js"></script>
+    <script src="./api/source-adapter/availability-adapter.js"></script>
+    <script src="./api/source-adapter/release-adapter.js"></script>
+    <script src="./api/signal-api.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
