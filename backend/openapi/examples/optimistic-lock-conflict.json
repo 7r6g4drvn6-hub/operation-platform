@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "OPTIMISTIC_LOCK_CONFLICT",
+    "message": "The Operation changed since it was read. Refresh before retrying.",
+    "details": {"resource": "OP-102", "expectedVersion": 2, "currentVersion": 3},
+    "traceId": "trc-20260907-000102"
+  }
+}

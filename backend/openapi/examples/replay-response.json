@@ -1,0 +1,7 @@
+{
+  "eventId": "probe-event-cn-0001",
+  "processingStatus": "PROCESSED",
+  "signalIds": ["SIG-000001"],
+  "evidenceIds": ["EVD-000001"],
+  "duplicate": true
+}

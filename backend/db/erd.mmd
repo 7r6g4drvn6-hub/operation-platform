@@ -1,0 +1,43 @@
+erDiagram
+  SERVICES ||--o{ SIGNALS : serves
+  REGIONS ||--o{ SIGNALS : scopes
+  ENVIRONMENTS ||--o{ SIGNALS : runs_in
+  SIGNAL_SOURCES ||--o{ SOURCE_EVENTS : receives
+  SOURCE_EVENTS ||--o{ SIGNALS : normalizes
+  SIGNALS ||--o{ PROBLEM_SIGNALS : contributes
+  PROBLEMS ||--o{ PROBLEM_SIGNALS : groups
+  INCIDENTS ||--o{ PROBLEM_INCIDENTS : relates
+  PROBLEMS ||--o{ PROBLEM_INCIDENTS : groups
+  PROBLEMS ||--o{ OPERATIONS : drives
+  OPERATIONS ||--o{ ACTIONS : contains
+  PROBE_REFS ||--o{ PROBE_RUNS : executes
+  PROBE_RUNS ||--o{ EVIDENCE : generates
+  PROBLEMS ||--o{ EVIDENCE : explains
+  OPERATIONS ||--o{ EVIDENCE : consumes
+  ACTIONS ||--o{ EVIDENCE : proves
+  OPERATIONS ||--o{ VERIFICATION_RUNS : verifies
+  VERIFICATION_RUNS ||--o| OUTCOMES : produces
+  OPERATIONS ||--o| OUTCOMES : closes
+  PROBLEMS ||--o{ HISTORY_EVENTS : records
+  OPERATIONS ||--o{ HISTORY_EVENTS : records
+  OPERATIONS ||--o{ OUTBOX_EVENTS : publishes
+
+  SERVICES { uuid id PK; varchar code UK; varchar name }
+  REGIONS { uuid id PK; varchar code UK; varchar name }
+  ENVIRONMENTS { uuid id PK; varchar code UK; varchar name }
+  SIGNAL_SOURCES { uuid id PK; varchar code UK; varchar source_type }
+  SOURCE_EVENTS { uuid id PK; uuid source_id FK; varchar external_event_id; varchar idempotency_key; jsonb payload; bytea raw_payload_ciphertext }
+  SIGNALS { uuid id PK; varchar display_id UK; uuid source_event_id FK; varchar status; numeric metric_value }
+  PROBLEMS { uuid id PK; varchar display_id UK; varchar status; boolean unreported; integer version }
+  INCIDENTS { uuid id PK; varchar display_id UK; varchar external_incident_id UK }
+  PROBLEM_SIGNALS { uuid problem_id PK,FK; uuid signal_id PK,FK }
+  PROBLEM_INCIDENTS { uuid problem_id PK,FK; uuid incident_id PK,FK }
+  OPERATIONS { uuid id PK; varchar display_id UK; uuid problem_id FK; varchar status; jsonb kpi_definition }
+  ACTIONS { uuid id PK; varchar display_id UK; uuid operation_id FK; varchar status }
+  PROBE_REFS { uuid id PK; varchar external_probe_id UK }
+  PROBE_RUNS { uuid id PK; varchar display_id UK; varchar external_run_id UK; uuid operation_id FK }
+  EVIDENCE { uuid id PK; varchar display_id UK; varchar source_type; varchar source_ref }
+  VERIFICATION_RUNS { uuid id PK; varchar display_id UK; varchar status; jsonb target_snapshot }
+  OUTCOMES { uuid id PK; varchar display_id UK; uuid operation_id FK,UK; uuid verification_run_id FK,UK }
+  HISTORY_EVENTS { uuid id PK; varchar event_type; uuid aggregate_id }
+  OUTBOX_EVENTS { uuid id PK; varchar event_type; uuid aggregate_id }

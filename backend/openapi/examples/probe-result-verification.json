@@ -1,0 +1,18 @@
+{
+  "eventId": "probe-event-cn-verify-0001",
+  "runId": "probe-run-cn-verify-0001",
+  "clientRequestId": "65023b95-87fd-44bf-87e9-1f8bd2340001",
+  "probeId": "MIB3_APPROVAL_DOWNLOAD_CN",
+  "purpose": "VERIFICATION",
+  "service": "MIB3 Approval",
+  "region": "CN",
+  "environment": "PRODUCTION",
+  "problemId": "PRB-000001",
+  "operationId": "OP-000001",
+  "verificationId": "VRF-000002",
+  "startedAt": "2026-09-07T06:00:00Z",
+  "completedAt": "2026-09-07T06:05:00Z",
+  "status": "COMPLETED",
+  "metrics": [{"name": "failure_rate", "value": 0.4, "threshold": 1, "unit": "%", "sampleSize": 100}],
+  "resultUrl": "https://probe.example.invalid/runs/probe-run-cn-verify-0001"
+}

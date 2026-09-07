@@ -1,0 +1,8 @@
+{
+  "eventId": "availability-cn-0001",
+  "service": "MIB3 Approval",
+  "region": "CN",
+  "environment": "PRODUCTION",
+  "occurredAt": "2026-09-07T02:02:00Z",
+  "metric": {"name": "availability", "value": 96.1, "threshold": 99.7, "unit": "%"}
+}

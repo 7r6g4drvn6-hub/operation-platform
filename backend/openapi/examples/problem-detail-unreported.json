@@ -1,0 +1,78 @@
+{
+  "displayId": "PRB-204",
+  "title": "Approval Download instability in Germany",
+  "description": "Probe evidence shows elevated HTTP 500 responses without a Backend Incident.",
+  "service": "MIB3 Approval",
+  "region": "DE",
+  "issueFamily": "APPROVAL_DOWNLOAD",
+  "risk": "HIGH",
+  "impactSummary": "Approval downloads are failing for an estimated 8.2% of attempts.",
+  "status": "INVESTIGATING",
+  "owner": "Operation Manager",
+  "unreported": true,
+  "firstDetectedAt": "2026-09-07T02:00:00Z",
+  "lastDetectedAt": "2026-09-07T02:05:00Z",
+  "version": 3,
+  "impact": {
+    "availability": 96.4,
+    "availabilityDeltaPp": -3.6,
+    "usersAffected": 1840,
+    "businessImpact": "HIGH"
+  },
+  "signals": [
+    {
+      "displayId": "SIG-000204",
+      "source": "PROBE",
+      "signalType": "PROBE_FAILURE_RATE",
+      "service": "MIB3 Approval",
+      "region": "DE",
+      "environment": "PRODUCTION",
+      "severity": "HIGH",
+      "status": "PROBLEM_CREATED",
+      "metric": {"name": "failure_rate", "value": 12.8, "threshold": 1, "unit": "%"},
+      "usersAffected": 1840,
+      "businessImpact": "HIGH",
+      "description": "Verification target exceeded in Germany.",
+      "detectedAt": "2026-09-07T02:05:00Z",
+      "version": 1
+    }
+  ],
+  "incidents": [],
+  "evidence": [
+    {
+      "displayId": "EVD-000204",
+      "evidenceType": "PROBLEM",
+      "sourceType": "PROBE",
+      "sourceRef": "probe-run-de-0001",
+      "problemId": "PRB-204",
+      "observedAt": "2026-09-07T02:05:00Z",
+      "metric": {"name": "failure_rate", "value": 12.8, "threshold": 1, "unit": "%"},
+      "status": "FAILED",
+      "metadata": {"httpStatus": 500}
+    },
+    {
+      "displayId": "EVD-000205",
+      "evidenceType": "PROBLEM",
+      "sourceType": "AVAILABILITY",
+      "sourceRef": "availability-de-2026-09-07-0200",
+      "problemId": "PRB-204",
+      "observedAt": "2026-09-07T02:00:00Z",
+      "metric": {"name": "availability", "value": 96.4, "threshold": 99.7, "unit": "%"},
+      "status": "DEGRADED"
+    }
+  ],
+  "operations": [],
+  "timeline": [
+    {"eventType": "SIGNAL_DETECTED", "aggregateType": "Signal", "description": "Probe failure detected in Germany.", "occurredAt": "2026-09-07T02:05:00Z"},
+    {"eventType": "PROBLEM_CREATED", "aggregateType": "Problem", "description": "Problem created without a Backend Incident.", "occurredAt": "2026-09-07T02:10:00Z"}
+  ],
+  "recommendation": {
+    "action": "RUN_VERIFICATION_PROBE",
+    "actionLabel": "Run verification Probe",
+    "why": "Probe failure, HTTP 500 responses and an availability drop indicate an active issue, while no Backend Incident exists.",
+    "supportingEvidence": ["EVD-000204", "EVD-000205"],
+    "owner": "Probe Operator",
+    "expectedOutcome": "Confirm the failure rate in Germany and produce a baseline for an Operation.",
+    "command": {"method": "POST", "path": "/operations/{operationId}/probe-runs"}
+  }
+}

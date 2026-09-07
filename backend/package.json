@@ -1,0 +1,9 @@
+{
+  "name": "operation-platform-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/security/*.test.mjs test/db/*.test.mjs test/openapi/*.test.mjs",
+    "check": "node --check src/security/redaction.mjs && node --check src/security/ai-safe-projection.mjs && node --check src/security/source-event-sanitizer.mjs"
+  }
+}

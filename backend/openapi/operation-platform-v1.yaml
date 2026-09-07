@@ -1,0 +1,789 @@
+openapi: 3.1.0
+info:
+  title: Operation Platform API
+  version: 1.0.0
+  description: |
+    Server-authoritative API for the evidence-driven Operation Platform.
+    Probe remains an independent Evidence Generator. Raw source payloads and
+    credentials are never returned by this contract.
+servers:
+  - url: /api/v1
+security:
+  - oidcBearer: []
+tags:
+  - name: Integrations
+  - name: Signals
+  - name: Problems
+  - name: Operations
+  - name: Evidence
+  - name: Verification
+  - name: Outcomes
+  - name: Management views
+paths:
+  /integrations/probe/results:
+    post:
+      tags: [Integrations]
+      summary: Ingest a Probe result
+      security: [{integrationClient: []}]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProbeResultEvent'}
+      responses:
+        '202':
+          description: Event durably stored for processing
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '200':
+          description: Duplicate event; existing references returned
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '409': {$ref: '#/components/responses/IdempotencyConflict'}
+  /integrations/availability/events:
+    post:
+      tags: [Integrations]
+      summary: Ingest an Availability event
+      security: [{integrationClient: []}]
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/AvailabilityEvent'}}
+      responses:
+        '202':
+          description: Event accepted
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '200':
+          description: Duplicate event
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /integrations/incidents/events:
+    post:
+      tags: [Integrations]
+      summary: Ingest a Backend Incident event
+      security: [{integrationClient: []}]
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/IncidentEvent'}}
+      responses:
+        '202':
+          description: Event accepted
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '200':
+          description: Duplicate event
+          content: {application/json: {schema: {$ref: '#/components/schemas/IngestionAccepted'}}}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /integrations/events/{eventId}:
+    get:
+      tags: [Integrations]
+      summary: Get source event processing status
+      parameters: [{ $ref: '#/components/parameters/EventId' }]
+      responses:
+        '200':
+          description: Processing status without raw credentials or payload
+          content: {application/json: {schema: {$ref: '#/components/schemas/EventStatus'}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /signals:
+    get:
+      tags: [Signals]
+      summary: List normalized Signals
+      parameters:
+        - {$ref: '#/components/parameters/Region'}
+        - {$ref: '#/components/parameters/Service'}
+        - {name: status, in: query, schema: {type: string}}
+        - {name: severity, in: query, schema: {type: string}}
+        - {name: source, in: query, schema: {type: string}}
+        - {$ref: '#/components/parameters/PageSize'}
+        - {$ref: '#/components/parameters/Cursor'}
+      responses:
+        '200':
+          description: Signals
+          content: {application/json: {schema: {$ref: '#/components/schemas/SignalList'}}}
+  /signals/{signalId}:
+    get:
+      tags: [Signals]
+      summary: Get Signal detail and correlation candidates
+      parameters: [{ $ref: '#/components/parameters/SignalId' }]
+      responses:
+        '200':
+          description: Signal detail
+          content: {application/json: {schema: {$ref: '#/components/schemas/SignalDetail'}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /signals/{signalId}/investigations:
+    post:
+      tags: [Signals]
+      summary: Start Signal investigation
+      parameters: [{ $ref: '#/components/parameters/SignalId' }]
+      responses:
+        '200':
+          description: Signal moved from DETECTED to ANALYZING
+          content: {application/json: {schema: {$ref: '#/components/schemas/Signal'}}}
+        '409': {$ref: '#/components/responses/InvalidState'}
+  /correlations/evaluate:
+    post:
+      tags: [Signals]
+      summary: Evaluate Signals without mutating state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signalIds]
+              properties:
+                signalIds: {type: array, minItems: 1, items: {type: string}}
+      responses:
+        '200':
+          description: Candidate Problem and matched rules
+          content: {application/json: {schema: {$ref: '#/components/schemas/CorrelationResult'}}}
+  /problems:
+    get:
+      tags: [Problems]
+      summary: List Problems
+      parameters:
+        - {$ref: '#/components/parameters/Region'}
+        - {$ref: '#/components/parameters/Service'}
+        - {name: risk, in: query, schema: {type: string}}
+        - {name: status, in: query, schema: {type: string}}
+        - {name: unreported, in: query, schema: {type: boolean}}
+        - {$ref: '#/components/parameters/PageSize'}
+        - {$ref: '#/components/parameters/Cursor'}
+      responses:
+        '200':
+          description: Problems
+          content: {application/json: {schema: {$ref: '#/components/schemas/ProblemList'}}}
+  /problems/from-signals:
+    post:
+      tags: [Problems]
+      summary: Create or adopt a Problem from Signals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signalIds, title, issueFamily, risk]
+              properties:
+                signalIds: {type: array, minItems: 1, items: {type: string}}
+                title: {type: string}
+                issueFamily: {type: string}
+                risk: {type: string, enum: [LOW, MEDIUM, HIGH, CRITICAL]}
+                ownerActorId: {type: string, format: uuid}
+      responses:
+        '201':
+          description: Problem created without requiring an Incident
+          content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /problems/{problemId}:
+    get:
+      tags: [Problems]
+      summary: Get Problem aggregate
+      description: Returns impact, Signals, Incidents, Probe/Availability Evidence, Operations, Timeline and recommendation.
+      parameters: [{ $ref: '#/components/parameters/ProblemId' }]
+      responses:
+        '200':
+          description: Problem detail aggregate
+          content: {application/json: {schema: {$ref: '#/components/schemas/ProblemDetail'}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /problems/{problemId}/recommendation:
+    get:
+      tags: [Problems]
+      summary: Get Recommended Next Action
+      parameters: [{ $ref: '#/components/parameters/ProblemId' }]
+      responses:
+        '200':
+          description: Action, reason, Evidence, owner and expected outcome
+          content: {application/json: {schema: {$ref: '#/components/schemas/Recommendation'}}}
+  /problems/{problemId}/incidents/{incidentId}:
+    post:
+      tags: [Problems]
+      summary: Link an Incident to a Problem
+      parameters:
+        - {$ref: '#/components/parameters/ProblemId'}
+        - {$ref: '#/components/parameters/IncidentId'}
+      responses:
+        '200':
+          description: Problem with recalculated unreported flag
+          content: {application/json: {schema: {$ref: '#/components/schemas/Problem'}}}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /operations:
+    get:
+      tags: [Operations]
+      summary: List Operations
+      parameters:
+        - {$ref: '#/components/parameters/Region'}
+        - {name: problemId, in: query, schema: {type: string}}
+        - {name: owner, in: query, schema: {type: string}}
+        - {name: status, in: query, schema: {type: string}}
+      responses:
+        '200':
+          description: Operations
+          content: {application/json: {schema: {$ref: '#/components/schemas/OperationList'}}}
+    post:
+      tags: [Operations]
+      summary: Create an Operation for a Problem
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/CreateOperationRequest'}}
+      responses:
+        '201':
+          description: Operation created in DRAFT
+          content: {application/json: {schema: {$ref: '#/components/schemas/Operation'}}}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /operations/{operationId}:
+    get:
+      tags: [Operations]
+      summary: Get Operation aggregate
+      parameters: [{ $ref: '#/components/parameters/OperationId' }]
+      responses:
+        '200':
+          description: Operation, Actions, Evidence, Verification and Outcome
+          content: {application/json: {schema: {$ref: '#/components/schemas/OperationDetail'}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /operations/{operationId}/start:
+    post:
+      tags: [Operations]
+      summary: Start an Operation
+      parameters: [{ $ref: '#/components/parameters/OperationId' }]
+      responses:
+        '200':
+          description: Operation moved to IN_PROGRESS
+          content: {application/json: {schema: {$ref: '#/components/schemas/Operation'}}}
+        '409': {$ref: '#/components/responses/InvalidState'}
+  /operations/{operationId}/actions:
+    post:
+      tags: [Operations]
+      summary: Create accountable Action
+      parameters: [{ $ref: '#/components/parameters/OperationId' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/CreateActionRequest'}}
+      responses:
+        '201':
+          description: Action created in PLANNED
+          content: {application/json: {schema: {$ref: '#/components/schemas/Action'}}}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /actions/{actionId}/complete:
+    post:
+      tags: [Operations]
+      summary: Complete an Action with actual result and optional Evidence reference
+      parameters: [{ $ref: '#/components/parameters/ActionId' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/CompleteActionRequest'}}
+      responses:
+        '200':
+          description: Action completed; Operation is not completed by this command
+          content: {application/json: {schema: {$ref: '#/components/schemas/Action'}}}
+        '409': {$ref: '#/components/responses/InvalidState'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /operations/{operationId}/probe-runs:
+    post:
+      tags: [Evidence]
+      summary: Request an independent Probe run
+      parameters: [{ $ref: '#/components/parameters/OperationId' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/ProbeRunRequest'}}
+      responses:
+        '202':
+          description: Probe request accepted
+          content: {application/json: {schema: {$ref: '#/components/schemas/ProbeRun'}}}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /operations/{operationId}/verification-runs:
+    post:
+      tags: [Verification]
+      summary: Start a Verification Run and freeze KPI targets
+      parameters: [{ $ref: '#/components/parameters/OperationId' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/StartVerificationRequest'}}
+      responses:
+        '201':
+          description: Verification requested
+          content: {application/json: {schema: {$ref: '#/components/schemas/VerificationRun'}}}
+        '409': {$ref: '#/components/responses/InvalidState'}
+  /verification-runs/{verificationId}/decision:
+    post:
+      tags: [Verification]
+      summary: Record explicit PASS or FAIL decision
+      description: |
+        Only this command may create an Outcome. PASS atomically completes the
+        Operation, resolves the Problem, archives related Signals, appends
+        History and creates an Outbox event. FAIL creates no Outcome.
+      parameters: [{ $ref: '#/components/parameters/VerificationId' }]
+      requestBody:
+        required: true
+        content:
+          application/json: {schema: {$ref: '#/components/schemas/VerificationDecisionRequest'}}
+      responses:
+        '200':
+          description: Decision and resulting aggregate
+          content: {application/json: {schema: {$ref: '#/components/schemas/VerificationDecisionResponse'}}}
+        '409': {$ref: '#/components/responses/InvalidState'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /evidence:
+    get:
+      tags: [Evidence]
+      summary: List normalized Evidence
+      parameters:
+        - {$ref: '#/components/parameters/Region'}
+        - {name: problemId, in: query, schema: {type: string}}
+        - {name: operationId, in: query, schema: {type: string}}
+        - {name: sourceType, in: query, schema: {type: string}}
+      responses:
+        '200':
+          description: Evidence without raw source payload
+          content: {application/json: {schema: {$ref: '#/components/schemas/EvidenceList'}}}
+  /outcomes/{outcomeId}:
+    get:
+      tags: [Outcomes]
+      summary: Get verified Outcome detail
+      parameters: [{ $ref: '#/components/parameters/OutcomeId' }]
+      responses:
+        '200':
+          description: Before/after, impact, Evidence, Problem and Operation
+          content: {application/json: {schema: {$ref: '#/components/schemas/OutcomeDetail'}}}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /overview/regions/{regionCode}:
+    get:
+      tags: [Management views]
+      summary: Get region Operation Overview
+      parameters: [{ $ref: '#/components/parameters/RegionCode' }]
+      responses:
+        '200':
+          description: Health, impact, outcomes, risk ranking and trend
+          content: {application/json: {schema: {$ref: '#/components/schemas/Overview'}}}
+  /command-center:
+    get:
+      tags: [Management views]
+      summary: Get current attention queue
+      parameters: [{ $ref: '#/components/parameters/Region' }]
+      responses:
+        '200':
+          description: Critical Problems, Unreported Problems, active Operations and pending Verification
+          content: {application/json: {schema: {$ref: '#/components/schemas/CommandCenter'}}}
+components:
+  securitySchemes:
+    oidcBearer: {type: http, scheme: bearer, bearerFormat: JWT}
+    integrationClient: {type: http, scheme: bearer, bearerFormat: OAuth2 client token or signed webhook}
+  parameters:
+    IdempotencyKey: {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 8}}
+    EventId: {name: eventId, in: path, required: true, schema: {type: string}}
+    SignalId: {name: signalId, in: path, required: true, schema: {type: string}}
+    ProblemId: {name: problemId, in: path, required: true, schema: {type: string}}
+    IncidentId: {name: incidentId, in: path, required: true, schema: {type: string}}
+    OperationId: {name: operationId, in: path, required: true, schema: {type: string}}
+    ActionId: {name: actionId, in: path, required: true, schema: {type: string}}
+    VerificationId: {name: verificationId, in: path, required: true, schema: {type: string}}
+    OutcomeId: {name: outcomeId, in: path, required: true, schema: {type: string}}
+    RegionCode: {name: regionCode, in: path, required: true, schema: {type: string, example: CN}}
+    Region: {name: region, in: query, required: false, schema: {type: string, example: CN}}
+    Service: {name: service, in: query, required: false, schema: {type: string}}
+    PageSize: {name: pageSize, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 25}}
+    Cursor: {name: cursor, in: query, schema: {type: string}}
+  responses:
+    BadRequest:
+      description: Invalid request
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    ValidationError:
+      description: Domain validation failed
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    Unauthorized:
+      description: Missing or invalid credentials
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    NotFound:
+      description: Resource not found
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    Conflict:
+      description: Conflict
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    InvalidState:
+      description: Invalid state transition
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    IdempotencyConflict:
+      description: Same idempotency key used with a different payload
+      content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, traceId]
+          properties:
+            code: {type: string, example: INVALID_STATE_TRANSITION}
+            message: {type: string}
+            details: {type: object, additionalProperties: true}
+            traceId: {type: string}
+    Metric:
+      type: object
+      required: [name, value, unit]
+      properties:
+        name: {type: string, example: failure_rate}
+        value: {type: number, example: 12.8}
+        threshold: {type: number, example: 1}
+        unit: {type: string, example: '%'}
+    ProbeResultEvent:
+      type: object
+      required: [eventId, runId, clientRequestId, probeId, purpose, service, region, environment, completedAt, status, metrics]
+      properties:
+        eventId: {type: string}
+        runId: {type: string}
+        clientRequestId: {type: string, format: uuid}
+        probeId: {type: string, example: MIB3_APPROVAL_DOWNLOAD_CN}
+        purpose: {type: string, enum: [DETECTION, DIAGNOSTIC, VERIFICATION]}
+        service: {type: string}
+        region: {type: string, example: CN}
+        environment: {type: string, example: PRODUCTION}
+        problemId: {type: string}
+        operationId: {type: string}
+        actionId: {type: string}
+        verificationId: {type: string}
+        startedAt: {type: string, format: date-time}
+        completedAt: {type: string, format: date-time}
+        status: {type: string, enum: [COMPLETED, FAILED]}
+        metrics: {type: array, items: {$ref: '#/components/schemas/Metric'}}
+        resultUrl: {type: string, format: uri}
+    AvailabilityEvent:
+      type: object
+      required: [eventId, service, region, environment, occurredAt, metric]
+      properties:
+        eventId: {type: string}
+        service: {type: string}
+        region: {type: string}
+        environment: {type: string}
+        occurredAt: {type: string, format: date-time}
+        metric: {$ref: '#/components/schemas/Metric'}
+    IncidentEvent:
+      type: object
+      required: [eventId, incidentId, title, service, region, occurredAt, priority, status]
+      properties:
+        eventId: {type: string}
+        incidentId: {type: string}
+        title: {type: string}
+        description: {type: string}
+        service: {type: string}
+        region: {type: string}
+        occurredAt: {type: string, format: date-time}
+        priority: {type: string, enum: [P1, P2, P3, P4]}
+        status: {type: string}
+    IngestionAccepted:
+      type: object
+      required: [eventId, processingStatus]
+      properties:
+        eventId: {type: string}
+        processingStatus: {type: string, enum: [RECEIVED, PROCESSED, QUARANTINED, FAILED]}
+        signalIds: {type: array, items: {type: string}}
+        evidenceIds: {type: array, items: {type: string}}
+        duplicate: {type: boolean}
+    EventStatus:
+      type: object
+      required: [eventId, source, processingStatus, receivedAt]
+      properties:
+        eventId: {type: string}
+        source: {type: string}
+        processingStatus: {type: string}
+        receivedAt: {type: string, format: date-time}
+        processedAt: {type: string, format: date-time}
+        errorCode: {type: string}
+        sourcePayloadIncluded: {type: boolean, const: false, description: Raw source payload is never included in this response.}
+    Signal:
+      type: object
+      required: [displayId, source, signalType, service, region, environment, severity, status, metric, detectedAt, version]
+      properties:
+        displayId: {type: string, example: SIG-000001}
+        source: {type: string, example: PROBE}
+        signalType: {type: string}
+        service: {type: string}
+        region: {type: string}
+        environment: {type: string}
+        severity: {type: string}
+        status: {type: string}
+        metric: {$ref: '#/components/schemas/Metric'}
+        usersAffected: {type: integer}
+        businessImpact: {type: string}
+        description: {type: string}
+        detectedAt: {type: string, format: date-time}
+        version: {type: integer}
+    SignalDetail:
+      allOf:
+        - {$ref: '#/components/schemas/Signal'}
+        - type: object
+          properties:
+            sourceEventId: {type: string}
+            correlationCandidates: {type: array, items: {$ref: '#/components/schemas/CorrelationResult'}}
+    SignalList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/Signal'}}
+        nextCursor: {type: string}
+    CorrelationResult:
+      type: object
+      required: [confidence, matchedSignalIds, matchedRules]
+      properties:
+        confidence: {type: number}
+        matchedSignalIds: {type: array, items: {type: string}}
+        matchedRules: {type: array, items: {type: string}}
+        candidateProblemTitle: {type: string}
+        recommendation: {$ref: '#/components/schemas/Recommendation'}
+    Problem:
+      type: object
+      required: [displayId, title, service, region, risk, status, unreported, firstDetectedAt, lastDetectedAt, version]
+      properties:
+        displayId: {type: string, example: PRB-000001}
+        title: {type: string}
+        description: {type: string}
+        service: {type: string}
+        region: {type: string}
+        issueFamily: {type: string}
+        risk: {type: string}
+        impactSummary: {type: string}
+        status: {type: string}
+        owner: {type: string}
+        unreported: {type: boolean}
+        firstDetectedAt: {type: string, format: date-time}
+        lastDetectedAt: {type: string, format: date-time}
+        version: {type: integer}
+    ProblemDetail:
+      allOf:
+        - {$ref: '#/components/schemas/Problem'}
+        - type: object
+          required: [impact, signals, incidents, evidence, operations, timeline, recommendation]
+          properties:
+            impact: {type: object, additionalProperties: true}
+            signals: {type: array, items: {$ref: '#/components/schemas/Signal'}}
+            incidents: {type: array, items: {type: object, additionalProperties: true}}
+            evidence: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+            operations: {type: array, items: {$ref: '#/components/schemas/Operation'}}
+            timeline: {type: array, items: {$ref: '#/components/schemas/HistoryEvent'}}
+            recommendation: {$ref: '#/components/schemas/Recommendation'}
+    ProblemList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/Problem'}}
+        nextCursor: {type: string}
+    Recommendation:
+      type: object
+      required: [action, why, supportingEvidence, owner, expectedOutcome]
+      properties:
+        action: {type: string, example: RUN_VERIFICATION_PROBE}
+        actionLabel: {type: string, example: Run verification Probe}
+        why: {type: string}
+        supportingEvidence: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+        owner: {type: string}
+        expectedOutcome: {type: string}
+        command: {type: object, additionalProperties: true}
+    CreateOperationRequest:
+      type: object
+      required: [problemId, title, objective, ownerActorId, expectedOutcome, kpiDefinition, evidenceRequirement]
+      properties:
+        problemId: {type: string}
+        title: {type: string}
+        objective: {type: string}
+        triggerSummary: {type: string}
+        scope: {type: object, additionalProperties: true}
+        priority: {type: string, enum: [P1, P2, P3, P4]}
+        ownerActorId: {type: string, format: uuid}
+        expectedOutcome: {type: string}
+        kpiDefinition: {type: object, additionalProperties: true}
+        evidenceRequirement: {type: object, additionalProperties: true}
+        targetAt: {type: string, format: date-time}
+    Operation:
+      type: object
+      required: [displayId, problemId, title, objective, owner, status, verificationStatus, version]
+      properties:
+        displayId: {type: string, example: OP-000001}
+        problemId: {type: string}
+        title: {type: string}
+        objective: {type: string}
+        owner: {type: string}
+        priority: {type: string}
+        expectedOutcome: {type: string}
+        status: {type: string}
+        verificationStatus: {type: string}
+        version: {type: integer}
+    OperationDetail:
+      allOf:
+        - {$ref: '#/components/schemas/Operation'}
+        - type: object
+          properties:
+            actions: {type: array, items: {$ref: '#/components/schemas/Action'}}
+            evidence: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+            verificationRuns: {type: array, items: {$ref: '#/components/schemas/VerificationRun'}}
+            outcome: {$ref: '#/components/schemas/Outcome'}
+            timeline: {type: array, items: {$ref: '#/components/schemas/HistoryEvent'}}
+    OperationList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/Operation'}}
+        nextCursor: {type: string}
+    CreateActionRequest:
+      type: object
+      required: [title, description, actionType, ownerActorId, priority, expectedResult]
+      properties:
+        title: {type: string}
+        description: {type: string}
+        actionType: {type: string}
+        ownerActorId: {type: string, format: uuid}
+        priority: {type: string, enum: [P1, P2, P3, P4]}
+        dueAt: {type: string, format: date-time}
+        expectedResult: {type: string}
+    CompleteActionRequest:
+      type: object
+      required: [actualResult, expectedVersion]
+      properties:
+        actualResult: {type: string}
+        evidenceIds: {type: array, items: {type: string}}
+        expectedVersion: {type: integer}
+    Action:
+      type: object
+      required: [displayId, operationId, title, owner, status, expectedResult, version]
+      properties:
+        displayId: {type: string, example: ACT-000001}
+        operationId: {type: string}
+        title: {type: string}
+        owner: {type: string}
+        status: {type: string}
+        expectedResult: {type: string}
+        actualResult: {type: string}
+        version: {type: integer}
+    ProbeRunRequest:
+      type: object
+      required: [probeId, purpose, region, environment, target]
+      properties:
+        probeId: {type: string}
+        purpose: {type: string, enum: [DIAGNOSTIC, VERIFICATION]}
+        actionId: {type: string}
+        verificationId: {type: string}
+        region: {type: string}
+        environment: {type: string}
+        target: {$ref: '#/components/schemas/Metric'}
+    ProbeRun:
+      type: object
+      required: [displayId, probeId, purpose, status, clientRequestId]
+      properties:
+        displayId: {type: string, example: PRN-000001}
+        probeId: {type: string}
+        purpose: {type: string}
+        status: {type: string}
+        clientRequestId: {type: string, format: uuid}
+        externalRunId: {type: string}
+        resultUrl: {type: string, format: uri}
+    Evidence:
+      type: object
+      required: [displayId, evidenceType, sourceType, sourceRef, problemId, observedAt, metric]
+      properties:
+        displayId: {type: string, example: EVD-000001}
+        evidenceType: {type: string, enum: [PROBLEM, ACTION, OUTCOME]}
+        sourceType: {type: string, enum: [PROBE, AVAILABILITY, INCIDENT, RELEASE, MONITORING]}
+        sourceRef: {type: string}
+        problemId: {type: string}
+        operationId: {type: string}
+        actionId: {type: string}
+        observedAt: {type: string, format: date-time}
+        metric: {$ref: '#/components/schemas/Metric'}
+        status: {type: string}
+        metadata: {type: object, additionalProperties: true}
+    EvidenceList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+        nextCursor: {type: string}
+    StartVerificationRequest:
+      type: object
+      required: [targetSnapshot]
+      properties:
+        targetSnapshot: {type: object, additionalProperties: true}
+        probeId: {type: string}
+    VerificationRun:
+      type: object
+      required: [displayId, operationId, status, targetSnapshot]
+      properties:
+        displayId: {type: string, example: VRF-000001}
+        operationId: {type: string}
+        probeRunId: {type: string}
+        status: {type: string, enum: [REQUESTED, RUNNING, PENDING_REVIEW, PASSED, FAILED]}
+        targetSnapshot: {type: object, additionalProperties: true}
+        actualSnapshot: {type: object, additionalProperties: true}
+        decisionReason: {type: string}
+    VerificationDecisionRequest:
+      type: object
+      required: [decision, reason]
+      properties:
+        decision: {type: string, enum: [PASS, FAIL]}
+        reason: {type: string}
+        expectedVersion: {type: integer}
+    VerificationDecisionResponse:
+      type: object
+      required: [verification]
+      properties:
+        verification: {$ref: '#/components/schemas/VerificationRun'}
+        outcome: {$ref: '#/components/schemas/Outcome'}
+        operation: {$ref: '#/components/schemas/Operation'}
+        problem: {$ref: '#/components/schemas/Problem'}
+    Outcome:
+      type: object
+      required: [displayId, operationId, problemId, verificationRunId, status, beforeMetric, afterMetric, impact, conclusion]
+      properties:
+        displayId: {type: string, example: OUT-000001}
+        operationId: {type: string}
+        problemId: {type: string}
+        verificationRunId: {type: string}
+        status: {type: string, enum: [VERIFIED]}
+        beforeMetric: {type: object, additionalProperties: true}
+        afterMetric: {type: object, additionalProperties: true}
+        impact: {type: object, additionalProperties: true}
+        conclusion: {type: string}
+        verifiedAt: {type: string, format: date-time}
+    OutcomeDetail:
+      allOf:
+        - {$ref: '#/components/schemas/Outcome'}
+        - type: object
+          properties:
+            evidence: {type: array, items: {$ref: '#/components/schemas/Evidence'}}
+            problem: {$ref: '#/components/schemas/Problem'}
+            operation: {$ref: '#/components/schemas/Operation'}
+    HistoryEvent:
+      type: object
+      required: [eventType, aggregateType, description, occurredAt]
+      properties:
+        eventType: {type: string}
+        aggregateType: {type: string}
+        description: {type: string}
+        occurredAt: {type: string, format: date-time}
+        actor: {type: string}
+    Overview:
+      type: object
+      properties:
+        region: {type: string}
+        health: {type: object, additionalProperties: true}
+        executiveSummary: {type: object, additionalProperties: true}
+        businessImpact: {type: object, additionalProperties: true}
+        completedOperations: {type: array, items: {$ref: '#/components/schemas/Operation'}}
+        riskServices: {type: array, items: {type: object, additionalProperties: true}}
+        trend: {type: array, items: {type: object, additionalProperties: true}}
+    CommandCenter:
+      type: object
+      properties:
+        criticalProblems: {type: array, items: {$ref: '#/components/schemas/Problem'}}
+        unreportedProblems: {type: array, items: {$ref: '#/components/schemas/ProblemDetail'}}
+        activeOperations: {type: array, items: {$ref: '#/components/schemas/OperationDetail'}}
+        pendingVerifications: {type: array, items: {$ref: '#/components/schemas/VerificationRun'}}

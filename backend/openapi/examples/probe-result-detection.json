@@ -1,0 +1,15 @@
+{
+  "eventId": "probe-event-cn-0001",
+  "runId": "probe-run-cn-0001",
+  "clientRequestId": "1c4f9df8-5ed8-4ca5-b2b8-1eaa7f893001",
+  "probeId": "MIB3_APPROVAL_DOWNLOAD_CN",
+  "purpose": "DETECTION",
+  "service": "MIB3 Approval",
+  "region": "CN",
+  "environment": "PRODUCTION",
+  "startedAt": "2026-09-07T02:00:00Z",
+  "completedAt": "2026-09-07T02:05:00Z",
+  "status": "COMPLETED",
+  "metrics": [{"name": "failure_rate", "value": 12.8, "threshold": 1, "unit": "%", "sampleSize": 100}],
+  "resultUrl": "https://probe.example.invalid/runs/probe-run-cn-0001"
+}

@@ -1,0 +1,15 @@
+{
+  "displayId": "OUT-001",
+  "operationId": "OP-102",
+  "problemId": "PRB-204",
+  "verificationRunId": "VRF-000010",
+  "status": "VERIFIED",
+  "beforeMetric": {"name": "failure_rate", "value": 12.8, "unit": "%"},
+  "afterMetric": {"name": "failure_rate", "value": 0.4, "unit": "%"},
+  "impact": {"availabilityBefore": 96.4, "availabilityAfter": 99.8, "deltaPp": 3.4},
+  "conclusion": "Objective achieved. Germany approval download failure rate is below the 1% target.",
+  "verifiedAt": "2026-09-07T07:30:00Z",
+  "evidence": ["EVD-000204", "EVD-000210"],
+  "problem": {"displayId": "PRB-204", "title": "Approval Download instability", "status": "RESOLVED", "risk": "HIGH", "unreported": false},
+  "operation": {"displayId": "OP-102", "title": "Improve Approval Download Stability", "status": "COMPLETED", "verificationStatus": "PASSED"}
+}

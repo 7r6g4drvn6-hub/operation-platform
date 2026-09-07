@@ -18,6 +18,52 @@ The hosted page is the static UI prototype and uses mock browser state. The loca
 `server.js` remains the development server; no production API or database is
 included in this prototype.
 
+## P0 production foundation
+
+The `backend/` directory now contains the production-facing foundation for the
+next implementation phase. It is intentionally additive: the current browser
+prototype still runs on `prototype-state.js` and has not been switched to a
+remote API.
+
+```text
+backend/
+  db/migrations/       PostgreSQL 16 schema and integrity constraints
+  db/seeds/            non-production reference data only
+  openapi/              server-authoritative API contract and examples
+  src/security/         ingestion redaction, pseudonymization and AI projection
+  test/                 static schema, contract and security tests
+```
+
+The intended real-data path is:
+
+```text
+Source system
+  -> authentication and schema validation
+  -> recursive redaction / HMAC pseudonymization
+  -> normalized Signal or Evidence
+  -> PostgreSQL
+  -> role-scoped API DTO
+  -> prototype or production frontend
+```
+
+Probe remains an independent product. Operation stores Probe references and
+consumes Probe Results as Evidence; it does not copy Probe definitions or run
+Probe execution logic. Raw source payloads are excluded by default. If an
+audited workflow needs retention, the application must encrypt the payload and
+store only ciphertext plus a key reference.
+
+Run the foundation checks with:
+
+```bash
+cd backend
+npm test
+npm run check
+```
+
+The migrations have been statically checked in this repository. Applying them
+requires PostgreSQL 16 and a separately managed Secret Manager/KMS; no
+production credentials or customer data are included here.
+
 ## Progress report
 
 - [Product progress report (PDF)](./docs/Operation_Platform_Product_Progress_Report.pdf)

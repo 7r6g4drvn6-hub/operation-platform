@@ -1,0 +1,27 @@
+{
+  "region": "CN",
+  "asOf": "2026-09-07T08:00:00Z",
+  "attentionSummary": {
+    "headline": "What needs my attention today?",
+    "criticalCount": 2,
+    "highRiskCount": 4,
+    "unreportedCount": 1,
+    "activeOperationCount": 3,
+    "pendingVerificationCount": 1
+  },
+  "criticalProblems": [
+    {"displayId": "PRB-201", "title": "Registration timeout in China", "service": "ODP Registration", "risk": "CRITICAL", "businessImpact": "HIGH", "status": "ACTIVE", "unreported": false},
+    {"displayId": "PRB-204", "title": "Approval Download instability", "service": "MIB3 Approval", "risk": "HIGH", "businessImpact": "HIGH", "status": "INVESTIGATING", "unreported": true}
+  ],
+  "unreportedProblems": [
+    {"displayId": "PRB-204", "title": "Approval Download instability", "reason": "Probe detected abnormality; no Backend Incident exists.", "recommendedActions": ["INVESTIGATE", "CREATE_PROBLEM", "CREATE_OPERATION"]}
+  ],
+  "activeOperations": [
+    {"displayId": "OP-102", "problemId": "PRB-204", "objective": "Reduce approval download failures below 1%.", "owner": "Operation Manager", "status": "IN_PROGRESS", "progress": 45},
+    {"displayId": "OP-099", "problemId": "PRB-201", "objective": "Restore registration success rate above 99.5%.", "owner": "Backend Team", "status": "VERIFYING", "progress": 82}
+  ],
+  "pendingVerifications": [
+    {"displayId": "VRF-000009", "operationId": "OP-099", "status": "PENDING_REVIEW", "targetSnapshot": {"successRate": ">= 99.5%"}}
+  ],
+  "sourcePayloadIncluded": false
+}

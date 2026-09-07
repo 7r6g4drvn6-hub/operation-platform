@@ -1,0 +1,5 @@
+{
+  "decision": "FAIL",
+  "reason": "Failure rate 4.8% remains above the 1% target; corrective action is required.",
+  "expectedVersion": 1
+}

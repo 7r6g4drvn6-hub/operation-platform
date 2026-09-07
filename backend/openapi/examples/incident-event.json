@@ -1,0 +1,11 @@
+{
+  "eventId": "incident-cn-0001",
+  "incidentId": "INC-CN-401",
+  "title": "Approval HTTP 500 spike",
+  "description": "HTTP 500 responses are concentrated in the approval download journey.",
+  "service": "MIB3 Approval",
+  "region": "CN",
+  "occurredAt": "2026-09-07T02:04:00Z",
+  "priority": "P1",
+  "status": "OPEN"
+}

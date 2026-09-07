@@ -1,0 +1,5 @@
+{
+  "decision": "PASS",
+  "reason": "Failure rate 0.4% is below 1% and availability 99.8% is above 99.7%.",
+  "expectedVersion": 2
+}
